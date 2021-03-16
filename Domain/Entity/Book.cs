@@ -1,8 +1,10 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using Mapster;
 
 namespace BookWebDotNet.Domain.Entity
 {
+    [AdaptTo("[name]Dto"), GenerateMapper]
     public record Book
     {
         [Key]

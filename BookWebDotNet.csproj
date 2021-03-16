@@ -16,9 +16,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
     <Folder Include="Domain\Repository\" />
-    <Folder Include="Service\" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Generated Include="**\*.g.cs" />
+  </ItemGroup>
+
+  <Target Name="Mapster" AfterTargets="AfterBuild">
+    <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet tool restore" />
+    <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet mapster model -a &quot;$(TargetDir)$(ProjectName).dll&quot; -o &quot;Domain/Dtos&quot;" />
+    <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet mapster extension -a &quot;$(TargetDir)$(ProjectName).dll&quot; -o &quot;Domain/Mappers&quot;" />
+    <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet mapster mapper -a &quot;$(TargetDir)$(ProjectName).dll&quot; -o &quot;Domain/Mappers&quot;" />
+  </Target>
+
+  <Target Name="CleanGenerated">
+    <Delete Files="@(Generated)" />
+  </Target>
 
 </Project>

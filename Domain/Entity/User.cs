@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Mapster;
 
 namespace BookWebDotNet.Domain.Entity
 {
+    [AdaptTo("[name]Dto"), GenerateMapper]
     public record User
     {
         public Guid UserId { get; init; }
@@ -12,6 +11,7 @@ namespace BookWebDotNet.Domain.Entity
         public string Surname { get; init; }
         public string Email { get; init; }
         public bool IsAdmin { get; init; }
+        [AdaptIgnore]
         public string Password { get; init; }
     }
 }
