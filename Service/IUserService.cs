@@ -7,7 +7,7 @@ using BookWebDotNet.Domain.Entity;
 
 namespace BookWebDotNet.Service
 {
-    interface UserService
+    interface IUserService
     {
         public Task<IEnumerable<UserDto>> GetAllUsersAsync();
         public Task<UserDto> GetUserAsync(Guid id);

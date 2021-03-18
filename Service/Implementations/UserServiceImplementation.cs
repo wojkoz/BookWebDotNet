@@ -9,7 +9,7 @@ using BookWebDotNet.Domain.Extensions;
 
 namespace BookWebDotNet.Service.Implementations
 {
-    public class UserServiceImplementation : UserService
+    public class UserServiceImplementation : IUserService
     {
         private readonly IList<User>  _repository = new List<User>
         {
