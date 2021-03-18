@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using BookWebDotNet.Domain.DbContext;
 using BookWebDotNet.Domain.Dtos;
 using BookWebDotNet.Domain.Entity;
 using BookWebDotNet.Domain.Extensions;
@@ -11,36 +12,25 @@ namespace BookWebDotNet.Service.Implementations
 {
     public class UserServiceImplementation : IUserService
     {
-        private readonly IList<User>  _repository = new List<User>
-        {
-            new User
-            {
-                Email = "email@meail.pl",
-                IsAdmin = false, Name = "john",
-                Password = "pass", Surname = "Doe",
-                UserId = Guid.NewGuid()
-            }
-            ,
-            new User
-            {
-                Email = "email@meail.pl",
-                IsAdmin = false,
-                Name = "Adam",
-                Password = "pass",
-                Surname = "Doe",
-                UserId = Guid.NewGuid()
+        private readonly BookWebDbContext  _repository ;
 
-            }
-        };
+        public UserServiceImplementation(BookWebDbContext repository)
+        {
+            _repository = repository;
+        }
+
         public async Task<IEnumerable<UserDto>> GetAllUsersAsync()
         {
-            var dtos = _repository.Select(user => user.AdaptToDto());
+            var dtos = _repository
+                .Users
+                .Select(user => user.AdaptToDto());
             return await Task.FromResult(dtos);
         }
 
         public async Task<UserDto> GetUserAsync(Guid id)
         {
             var dto = _repository
+                .Users
                 .SingleOrDefault(user => user.UserId.Equals(id))
                 .AdaptToDto();
 
@@ -50,6 +40,7 @@ namespace BookWebDotNet.Service.Implementations
         public async Task<UserDto> GetUserAsync(string email)
         {
             var dto = _repository
+                .Users
                 .SingleOrDefault(user => user.Email == email)
                 .AdaptToDto();
 
@@ -62,36 +53,24 @@ namespace BookWebDotNet.Service.Implementations
 
             _repository.Add(user);
 
+            await _repository.SaveChangesAsync();
+
             return await Task.FromResult(user.AdaptToDto());
         }
 
         public async Task<UserDto> UpdateUserAsync(UserDto dto)
         {
-            int index = -1;
+            var user = await _repository.Users.FindAsync(dto.UserId);
 
-            for (int i = 0; i < _repository.Count; i++)
-            {
-                if (_repository[i].UserId.Equals(dto.UserId))
-                {
-                    index = i;
-                    break;
-                }
-            }
-
-            if (index < 0)
+            if (user is null)
             {
                 // TODO: throw exception with message "no user with that id"
+                return null;
             }
 
-            var updatedUser = _repository[index] with
-            {
-                Surname = dto.Surname,
-                Email = dto.Email,
-                Name = dto.Name,
-                IsAdmin = dto.IsAdmin
-            };
+            _repository.Users.Update(dto.ToUser(user.Password));
 
-            _repository[index] = updatedUser;
+            await _repository.SaveChangesAsync();
 
             return await Task.FromResult(dto);
 
@@ -99,35 +78,39 @@ namespace BookWebDotNet.Service.Implementations
 
         public async Task DeleteUserAsync(string email)
         {
-            var user = _repository.FirstOrDefault(item => item.Email == email);
+            var user = _repository.Users.FirstOrDefault(item => item.Email == email);
 
-            var isDeleted = _repository.Remove(user);
-
-            if (!isDeleted)
+            if (user is null)
             {
                 // TODO: throw exception with message "no user with that email"
+                return;
             }
+
+            _repository.Remove(user);
+            await _repository.SaveChangesAsync();
 
             await Task.Delay(100);
         }
 
         public async Task DeleteUserAsync(Guid id)
         {
-            var user = _repository.FirstOrDefault(item => item.UserId.Equals(id));
+            var user = _repository.Users.FirstOrDefault(item => item.UserId.Equals(id));
 
-            var isDeleted = _repository.Remove(user);
-
-            if (!isDeleted)
+            if (user is null)
             {
                 // TODO: throw exception with message "no user with that email"
+                return;
             }
+
+            _repository.Remove(user);
+            await _repository.SaveChangesAsync();
 
             await Task.Delay(100);
         }
 
         public async Task<bool> EmailExistsAsync(string email)
         {
-            var userFound = _repository.FirstOrDefault(user => user.Email == email);
+            var userFound = _repository.Users.FirstOrDefault(user => user.Email == email);
 
             return await Task.FromResult(userFound is null);
         }

@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using BookWebDotNet.Domain.Dtos;
 using BookWebDotNet.Domain.Entity;
 
 namespace BookWebDotNet.Service
 {
-    interface IUserService
+    public interface IUserService
     {
         public Task<IEnumerable<UserDto>> GetAllUsersAsync();
         public Task<UserDto> GetUserAsync(Guid id);
