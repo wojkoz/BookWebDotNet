@@ -19,8 +19,6 @@ namespace BookWebDotNet.Service
         /// <summary>Throws EntityNotFoundException when can't find user</summary> 
         public Task<UserDto> UpdateUserAsync(UserDto dto);
         /// <summary>Throws EntityNotFoundException when can't find user</summary> 
-        public Task DeleteUserAsync(string email);
-        /// <summary>Throws EntityNotFoundException when can't find user</summary> 
         public Task DeleteUserAsync(Guid id);
 
     }

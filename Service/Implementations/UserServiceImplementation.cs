@@ -92,19 +92,6 @@ namespace BookWebDotNet.Service.Implementations
 
         }
 
-        public async Task DeleteUserAsync(string email)
-        {
-            var user = _repository.Users.FirstOrDefault(item => item.Email == email);
-
-            if (user is null)
-            {
-                throw new EntityNotFoundException($"Couldn\'t find user with email = {email}");
-            }
-
-            _repository.Remove(user);
-            await _repository.SaveChangesAsync();
-        }
-
         public async Task DeleteUserAsync(Guid id)
         {
             var user = _repository.Users.FirstOrDefault(item => item.UserId.Equals(id));

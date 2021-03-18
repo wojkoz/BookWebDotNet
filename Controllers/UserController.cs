@@ -72,5 +72,13 @@ namespace BookWebDotNet.Controllers
             return Ok(user);
         }
 
+        [HttpDelete("/api/[controller]/{id}")]
+        public async Task<ActionResult> DeleteUserById(Guid id)
+        {
+            await _service.DeleteUserAsync(id);
+
+            return Ok();
+        }
+
     }
 }
