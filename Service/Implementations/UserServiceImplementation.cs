@@ -98,7 +98,6 @@ namespace BookWebDotNet.Service.Implementations
 
             if (user is null)
             {
-                // TODO: throw exception with message "no user with that email"
                 throw new EntityNotFoundException($"Couldn\'t find user with id = {id}");
             }
 
