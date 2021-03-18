@@ -15,7 +15,6 @@ namespace BookWebDotNet.Service
         public Task<UserDto> UpdateUserAsync(UserDto dto);
         public Task DeleteUserAsync(string email);
         public Task DeleteUserAsync(Guid id);
-        public Task<bool> EmailExistsAsync(string email);
 
     }
 }

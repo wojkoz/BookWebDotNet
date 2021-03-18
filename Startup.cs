@@ -30,7 +30,11 @@ namespace BookWebDotNet
 
             services.AddScoped<IUserService, UserServiceImplementation>();
 
-            services.AddControllers();
+            services.AddControllers(options =>
+            {
+                options.SuppressAsyncSuffixInActionNames = false;
+            });
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "BookWebDotNet", Version = "v1" });

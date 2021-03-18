@@ -10,10 +10,10 @@ namespace BookWebDotNet.Domain.DbContext
 
         }
 
-        public DbSet<User> Users;
-        public DbSet<Review> Reviews;
-        public DbSet<Comment> Comments;
-        public DbSet<Book> Books;
+        public DbSet<User> Users { get; set; }
+        public DbSet<Review> Reviews { get; set; }
+        public DbSet<Comment> Comments { get; set; }
+        public DbSet<Book> Books { get; set; }
 
     }
 }

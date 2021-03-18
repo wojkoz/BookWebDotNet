@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using BookWebDotNet.Domain.DbContext;
 using BookWebDotNet.Domain.Dtos;
@@ -49,6 +48,13 @@ namespace BookWebDotNet.Service.Implementations
 
         public async Task<UserDto> CreateUserAsync(CreateUserDto createUserDto)
         {
+            var emailExists = await this.EmailExistsAsync(createUserDto.Email);
+
+            if (emailExists)
+            {
+                //TODO: throw exception "email exists"
+            }
+
             var user = createUserDto.ConvertToUser();
 
             _repository.Add(user);
@@ -108,7 +114,7 @@ namespace BookWebDotNet.Service.Implementations
             await Task.Delay(100);
         }
 
-        public async Task<bool> EmailExistsAsync(string email)
+        private async Task<bool> EmailExistsAsync(string email)
         {
             var userFound = _repository.Users.FirstOrDefault(user => user.Email == email);
 
