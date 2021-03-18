@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using BookWebDotNet.Domain.DbContext;
 using BookWebDotNet.Domain.Dtos;
 using BookWebDotNet.Domain.Entity;
+using BookWebDotNet.Domain.Exceptions;
 using BookWebDotNet.Domain.Extensions;
 
 namespace BookWebDotNet.Service.Implementations
@@ -31,7 +32,12 @@ namespace BookWebDotNet.Service.Implementations
             var dto = _repository
                 .Users
                 .SingleOrDefault(user => user.UserId.Equals(id))
-                .AdaptToDto();
+                ?.AdaptToDto();
+
+            if (dto is null)
+            {
+                throw new EntityNotFoundException($"Couldn\'t find user with id = {id}");
+            }
 
             return await Task.FromResult(dto);
         }
@@ -41,7 +47,12 @@ namespace BookWebDotNet.Service.Implementations
             var dto = _repository
                 .Users
                 .SingleOrDefault(user => user.Email == email)
-                .AdaptToDto();
+                ?.AdaptToDto();
+
+            if (dto is null)
+            {
+                throw new EntityNotFoundException($"Couldn\'t find user with email = {email}");
+            }
 
             return await Task.FromResult(dto);
         }
@@ -52,7 +63,7 @@ namespace BookWebDotNet.Service.Implementations
 
             if (emailExists)
             {
-                //TODO: throw exception "email exists"
+                throw new EntityAlreadyExistsException("Email duplication");
             }
 
             var user = createUserDto.ConvertToUser();
@@ -70,8 +81,7 @@ namespace BookWebDotNet.Service.Implementations
 
             if (user is null)
             {
-                // TODO: throw exception with message "no user with that id"
-                return null;
+                throw new EntityNotFoundException($"Couldn\'t find user with id = {dto.UserId}");
             }
 
             _repository.Users.Update(dto.ToUser(user.Password));
@@ -88,14 +98,11 @@ namespace BookWebDotNet.Service.Implementations
 
             if (user is null)
             {
-                // TODO: throw exception with message "no user with that email"
-                return;
+                throw new EntityNotFoundException($"Couldn\'t find user with email = {email}");
             }
 
             _repository.Remove(user);
             await _repository.SaveChangesAsync();
-
-            await Task.Delay(100);
         }
 
         public async Task DeleteUserAsync(Guid id)
@@ -105,13 +112,11 @@ namespace BookWebDotNet.Service.Implementations
             if (user is null)
             {
                 // TODO: throw exception with message "no user with that email"
-                return;
+                throw new EntityNotFoundException($"Couldn\'t find user with id = {id}");
             }
 
             _repository.Remove(user);
             await _repository.SaveChangesAsync();
-
-            await Task.Delay(100);
         }
 
         private async Task<bool> EmailExistsAsync(string email)
