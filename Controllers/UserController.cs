@@ -38,7 +38,7 @@ namespace BookWebDotNet.Controllers
             return CreatedAtAction(nameof(GetAllUsersAsync), new {id = user.UserId}, user);
         }
 
-        [HttpGet("/{id}")]
+        [HttpGet("/api/[controller]/{id}")]
         public async Task<ActionResult<UserDto>> GetUserById(Guid id)
         {
             var user = await _service.GetUserAsync(id);
@@ -51,7 +51,7 @@ namespace BookWebDotNet.Controllers
             return Ok(user);
         }
 
-        [HttpGet("/{email}")]
+        [HttpGet("/api/[controller]/{email}")]
         public async Task<ActionResult<UserDto>> GetUserById(string email)
         {
             var user = await _service.GetUserAsync(email);
@@ -64,7 +64,7 @@ namespace BookWebDotNet.Controllers
             return Ok(user);
         }
 
-        [HttpPost("/update")]
+        [HttpPut]
         public async Task<ActionResult<UserDto>> UpdateUser([FromBody] UserDto dto)
         {
             var user = await _service.UpdateUserAsync(dto);

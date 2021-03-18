@@ -26,7 +26,7 @@ namespace BookWebDotNet.Service.Implementations
                 .Select(user => user.AdaptToDto());
             return await Task.FromResult(dtos);
         }
-
+        
         public async Task<UserDto> GetUserAsync(Guid id)
         {
             var dto = _repository
@@ -83,8 +83,8 @@ namespace BookWebDotNet.Service.Implementations
             {
                 throw new EntityNotFoundException($"Couldn\'t find user with id = {dto.UserId}");
             }
-
-            _repository.Users.Update(dto.ToUser(user.Password));
+            
+            _repository.Entry(user).CurrentValues.SetValues(dto.ToUser(user.Password));
 
             await _repository.SaveChangesAsync();
 
