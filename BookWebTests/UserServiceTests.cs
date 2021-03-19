@@ -1,18 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Data.Entity.Infrastructure;
-using System.Linq;
-using System.Threading.Tasks;
 using BookWebDotNet.Domain.DbContext;
 using BookWebDotNet.Domain.Entity;
 using BookWebDotNet.Service.Implementations;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using NSubstitute;
-using NSubstitute.Extensions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
-namespace BookWebXUnitTests
+namespace BookWebTests
 {
     public class UserServiceTests
     {
@@ -29,8 +27,6 @@ namespace BookWebXUnitTests
         {
             //Arrange
             var guid = Guid.NewGuid();
-            var set = Substitute.For<DbSet<User>, IQueryable<User>, IDbAsyncEnumerable<User>>();
-
             var data = GenerateUsers(guid).AsQueryable();
             var mockSet = Substitute.For<DbSet<User>, IQueryable<User>>();
 
@@ -40,7 +36,7 @@ namespace BookWebXUnitTests
             ((IQueryable<User>)mockSet).GetEnumerator().Returns(data.GetEnumerator());
 
             _userRepo.Users.Returns(mockSet);
-            
+
             //Act
             var userDto = await _sut.GetUserAsync(guid);
             //Assert
@@ -50,7 +46,7 @@ namespace BookWebXUnitTests
 
         public static IEnumerable<User> GenerateUsers(Guid? id)
         {
-           return new List<User>
+            return new List<User>
             {
                 new User
                 {
