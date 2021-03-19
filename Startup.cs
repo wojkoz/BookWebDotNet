@@ -28,7 +28,7 @@ namespace BookWebDotNet
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
 
-            services.AddScoped<IUserService, UserServiceImplementation>();
+            services.AddScoped<IUserService, UserService>();
 
             services.AddControllers(options =>
             {

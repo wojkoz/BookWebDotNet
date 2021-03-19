@@ -10,11 +10,11 @@ using BookWebDotNet.Domain.Extensions;
 
 namespace BookWebDotNet.Service.Implementations
 {
-    public class UserServiceImplementation : IUserService
+    public class UserService : IUserService
     {
         private readonly BookWebDbContext  _repository ;
 
-        public UserServiceImplementation(BookWebDbContext repository)
+        public UserService(BookWebDbContext repository)
         {
             _repository = repository;
         }
@@ -31,15 +31,14 @@ namespace BookWebDotNet.Service.Implementations
         {
             var dto = _repository
                 .Users
-                .SingleOrDefault(user => user.UserId.Equals(id))
-                ?.AdaptToDto();
+                .FirstOrDefault(user => user.UserId.Equals(id));
 
             if (dto is null)
             {
                 throw new EntityNotFoundException($"Couldn\'t find user with id = {id}");
             }
 
-            return await Task.FromResult(dto);
+            return await Task.FromResult(dto.AdaptToDto());
         }
 
         public async Task<UserDto> GetUserAsync(string email)
