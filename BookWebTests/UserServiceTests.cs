@@ -2,11 +2,9 @@ using BookWebDotNet.Domain.DbContext;
 using BookWebDotNet.Domain.Entity;
 using BookWebDotNet.Service.Implementations;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using NSubstitute;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using BookWebDotNet.Domain.Exceptions;
 using Xunit;
@@ -28,7 +26,8 @@ namespace BookWebTests
         {
             //Arrange
             var guid = Guid.NewGuid();
-            var mockSet = GenerateUserMockSet(guid);
+            var data = GenerateUsers(guid);
+            var mockSet = DbSetMock.GenerateMockSet(data);
 
             _userRepo.Users.Returns(mockSet);
 
@@ -44,8 +43,9 @@ namespace BookWebTests
         {
             //Arrange
             var guid = Guid.NewGuid();
-            var mockSet = GenerateUserMockSet(null);
-        
+            var data = GenerateUsers(null);
+            var mockSet = DbSetMock.GenerateMockSet(data);
+
             _userRepo.Users.Returns(mockSet);
         
             //Act
@@ -67,7 +67,8 @@ namespace BookWebTests
         {
             //Arrange
             const string email = "test@test.pl";
-            var mockSet = GenerateUserMockSet(Guid.NewGuid());
+            var data = GenerateUsers(Guid.NewGuid());
+            var mockSet = DbSetMock.GenerateMockSet(data);
 
             _userRepo.Users.Returns(mockSet);
 
@@ -83,7 +84,8 @@ namespace BookWebTests
         {
             //Arrange
             const string email = "tes@ttttt.op";
-            var mockSet = GenerateUserMockSet(null);
+            var data = GenerateUsers(null);
+            var mockSet = DbSetMock.GenerateMockSet(data);
 
             _userRepo.Users.Returns(mockSet);
 
@@ -100,17 +102,7 @@ namespace BookWebTests
                 .WithMessage($"Couldn\'t find user with email = {email}");
         }
 
-        private static DbSet<User> GenerateUserMockSet(Guid? guid)
-        {
-            var data = GenerateUsers(guid).AsQueryable();
-            var mockSet = Substitute.For<DbSet<User>, IQueryable<User>>();
-
-            ((IQueryable<User>)mockSet).Provider.Returns(data.Provider);
-            ((IQueryable<User>)mockSet).Expression.Returns(data.Expression);
-            ((IQueryable<User>)mockSet).ElementType.Returns(data.ElementType);
-            ((IQueryable<User>)mockSet).GetEnumerator().Returns(data.GetEnumerator());
-            return mockSet;
-        }
+        
 
 
         public static IEnumerable<User> GenerateUsers(Guid? id)
