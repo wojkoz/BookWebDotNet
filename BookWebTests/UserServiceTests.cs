@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BookWebDotNet.Domain.Dtos;
 using BookWebDotNet.Domain.Exceptions;
 using Xunit;
 using Xunit.Abstractions;
@@ -176,6 +177,38 @@ namespace BookWebTests
                 .Should()
                 .ThrowAsync<EntityNotFoundException>()
                 .WithMessage($"Couldn\'t find user with id = {dto.UserId}");
+        }
+
+        [Fact]
+        public async Task CreateUserAsync_ShouldReturnUserDto_AfterUserWasCreated()
+        {
+            //Arrange
+            const string password = "noPass";
+            const string email = "niceEmail2@org.pl";
+            const string name = "Nice";
+            const string surname = "Man";
+
+            var cud = new CreateUserDto
+            {
+                Password = password,
+                Email = email,
+                IsAdmin = false,
+                Name = name,
+                Surname = surname
+            };
+            var data = GenerateUsers(null);
+            var mockSet = DbSetMock.GenerateMockSet(data);
+            _userRepo.Users.Returns(mockSet);
+
+            //Act
+            var user = await _sut.CreateUserAsync(cud);
+
+            //Assert
+            user.Should().NotBeNull();
+            user.Email.Should().Be(email);
+            user.IsAdmin.Should().BeFalse();
+            user.Name.Should().Be(name);
+            user.Surname.Should().Be(surname);
         }
 
 

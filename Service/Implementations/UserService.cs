@@ -62,7 +62,7 @@ namespace BookWebDotNet.Service.Implementations
 
         public async Task<UserDto> CreateUserAsync(CreateUserDto createUserDto)
         {
-            var emailExists = await this.EmailExistsAsync(createUserDto.Email);
+            var emailExists = await EmailExistsAsync(createUserDto.Email);
 
             if (emailExists)
             {
@@ -113,7 +113,7 @@ namespace BookWebDotNet.Service.Implementations
         {
             var userFound = _repository.Users.FirstOrDefault(user => user.Email == email);
 
-            return await Task.FromResult(userFound is null);
+            return await Task.FromResult(!(userFound is null));
         }
     }
 }
