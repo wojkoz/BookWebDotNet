@@ -7,6 +7,7 @@ using BookWebDotNet.Domain.Dtos;
 using BookWebDotNet.Domain.Entity;
 using BookWebDotNet.Domain.Exceptions;
 using BookWebDotNet.Domain.Extensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookWebDotNet.Service.Implementations
 {
@@ -23,6 +24,7 @@ namespace BookWebDotNet.Service.Implementations
         {
             var dtos = _repository
                 .Users
+                .AsNoTracking()
                 .Select(user => user.AdaptToDto());
             return await Task.FromResult(dtos);
         }
@@ -31,6 +33,7 @@ namespace BookWebDotNet.Service.Implementations
         {
             var dto = _repository
                 .Users
+                .AsNoTracking()
                 .FirstOrDefault(user => user.UserId.Equals(id));
 
             if (dto is null)
@@ -45,6 +48,7 @@ namespace BookWebDotNet.Service.Implementations
         {
             var dto = _repository
                 .Users
+                .AsNoTracking()
                 .SingleOrDefault(user => user.Email == email)
                 ?.AdaptToDto();
 
@@ -76,14 +80,15 @@ namespace BookWebDotNet.Service.Implementations
 
         public async Task<UserDto> UpdateUserAsync(UserDto dto)
         {
-            var user = await _repository.Users.FindAsync(dto.UserId);
+            var user = _repository.Users.AsNoTracking().FirstOrDefault(u => u.UserId.Equals(dto.UserId));
 
             if (user is null)
             {
                 throw new EntityNotFoundException($"Couldn\'t find user with id = {dto.UserId}");
             }
-            
-            _repository.Entry(user).CurrentValues.SetValues(dto.ToUser(user.Password));
+
+            //_repository.Entry(user).CurrentValues.SetValues(dto.ToUser(user.Password));
+            _repository.Update(dto.ToUser(user.Password));
 
             await _repository.SaveChangesAsync();
 
