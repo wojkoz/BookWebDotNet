@@ -98,7 +98,7 @@ namespace BookWebDotNet.Service.Implementations
 
         public async Task DeleteUserAsync(Guid id)
         {
-            var user = _repository.Users.FirstOrDefault(item => item.UserId.Equals(id));
+            var user = _repository.Users.AsNoTracking().FirstOrDefault(item => item.UserId.Equals(id));
 
             if (user is null)
             {
