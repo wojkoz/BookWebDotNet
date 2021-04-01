@@ -1,12 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using BookWebDotNet.Domain.Dtos;
 using BookWebDotNet.Domain.Entity;
 using BookWebDotNet.Service;
-using Microsoft.AspNetCore.Routing;
 
 namespace BookWebDotNet.Controllers
 {

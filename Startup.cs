@@ -29,6 +29,7 @@ namespace BookWebDotNet
             });
 
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IBookService, BookService>();
 
             services.AddControllers(options =>
             {

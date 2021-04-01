@@ -19,11 +19,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Domain\Repository\" />
+    <Generated Include="**\*.g.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <Generated Include="**\*.g.cs" />
+    <Compile Remove="Domain\Repository\**" />
+    <Content Remove="Domain\Repository\**" />
+    <EmbeddedResource Remove="Domain\Repository\**" />
+    <Generated Remove="Domain\Repository\**" />
+    <None Remove="Domain\Repository\**" />
   </ItemGroup>
 
   <Target Name="Mapster" AfterTargets="AfterBuild">
