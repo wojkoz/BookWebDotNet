@@ -39,7 +39,7 @@ namespace BookWebDotNet.Controllers
             }
             catch (EntityAlreadyExistsException e)
             {
-                return Conflict(e.Message);
+                return Conflict(new {message = e.Message });
             }
         }
 

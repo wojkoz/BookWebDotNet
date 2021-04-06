@@ -73,6 +73,11 @@ namespace BookWebDotNet.Service.Implementations
 
         public Task<IEnumerable<BookDto>> FindByNameAsync(string str)
         {
+            if (str.Equals(""))
+            {
+                return Task.FromResult(Enumerable.Empty<BookDto>());
+            }
+
             var books = _repository.Books
                 .FromSqlRaw("SELECT m FROM Book m WHERE LOWER(m.title) LIKE TRIM(LOWER(CONCAT('%',TRIM({0}),'%')))",
                     str)

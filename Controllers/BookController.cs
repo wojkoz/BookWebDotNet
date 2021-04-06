@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using BookWebDotNet.Domain.Dtos;
 using BookWebDotNet.Domain.Entity;
+using BookWebDotNet.Domain.Exceptions;
 using BookWebDotNet.Service;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,13 +31,20 @@ namespace BookWebDotNet.Controllers
         [HttpPost]
         public async Task<ActionResult<BookDto>> CreateBookAsync([FromBody] CreateBookDto dto)
         {
-            var book = await _service.CreateBookAsync(dto);
+            try
+            {
+                var book = await _service.CreateBookAsync(dto);
 
-            return CreatedAtAction(nameof(GetAllBooksAsync), new { id = book.BookId }, book);
+                return CreatedAtAction(nameof(GetAllBooksAsync), new { id = book.BookId }, book);
+            }
+            catch (EntityAlreadyExistsException e)
+            {
+                return Conflict(new {message = e.Message});
+            }
         }
 
         [HttpGet("/api/[controller]/{id}")]
-        public async Task<ActionResult<BookDto>> GetBookById(Guid id)
+        public async Task<ActionResult<BookDto>> GetBookByIdAsync(Guid id)
         {
             var book = await _service.GetByIdAsync(id);
 
@@ -49,11 +57,26 @@ namespace BookWebDotNet.Controllers
         }
 
         [HttpDelete("/api/[controller]/{id}")]
-        public async Task<ActionResult> DeleteBookById(Guid id)
+        public async Task<ActionResult> DeleteBookByIdAsync(Guid id)
         {
-            await _service.DeleteByIdAsync(id);
+            try
+            {
+                await _service.DeleteByIdAsync(id);
 
-            return Ok();
+                return Ok();
+            }
+            catch (EntityNotFoundException)
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpGet("/api/[controller]/search-title/{title}")]
+        public async Task<ActionResult<IEnumerable<BookDto>>> SearchBookByTitleAsync(string title)
+        {
+            var books = await _service.FindByNameAsync(title);
+
+            return Ok(books);
         }
     }
 }
