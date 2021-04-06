@@ -34,13 +34,9 @@ namespace BookWebDotNet.Service.Implementations
         {
             var book = await _repository.Books
                 .AsNoTracking()
-                .FirstOrDefaultAsync(book => book.BookId.Equals(id));
-            if (book is null)
-            {
-                throw new EntityNotFoundException($"Couldn\'t find book with id = {id}");
-            }
+                .FirstOrDefaultAsync(b => b.BookId.Equals(id));
 
-            return book.AdaptToDto();
+            return book?.AdaptToDto();
         }
 
         public async Task DeleteByIdAsync(Guid id)

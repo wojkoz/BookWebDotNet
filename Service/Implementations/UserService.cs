@@ -38,7 +38,7 @@ namespace BookWebDotNet.Service.Implementations
 
             if (dto is null)
             {
-                throw new EntityNotFoundException($"Couldn\'t find user with id = {id}");
+                return null;
             }
 
             return await Task.FromResult(dto.AdaptToDto());
@@ -54,7 +54,7 @@ namespace BookWebDotNet.Service.Implementations
 
             if (dto is null)
             {
-                throw new EntityNotFoundException($"Couldn\'t find user with email = {email}");
+                return null;
             }
 
             return await Task.FromResult(dto);
@@ -80,14 +80,15 @@ namespace BookWebDotNet.Service.Implementations
 
         public async Task<UserDto> UpdateUserAsync(UserDto dto)
         {
-            var user = _repository.Users.AsNoTracking().FirstOrDefault(u => u.UserId.Equals(dto.UserId));
+            var user = _repository.Users
+                .AsNoTracking()
+                .FirstOrDefault(u => u.UserId.Equals(dto.UserId));
 
             if (user is null)
             {
                 throw new EntityNotFoundException($"Couldn\'t find user with id = {dto.UserId}");
             }
 
-            //_repository.Entry(user).CurrentValues.SetValues(dto.ToUser(user.Password));
             _repository.Update(dto.ToUser(user.Password));
 
             await _repository.SaveChangesAsync();

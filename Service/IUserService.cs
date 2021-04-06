@@ -10,9 +10,7 @@ namespace BookWebDotNet.Service
     public interface IUserService
     {
         public Task<IEnumerable<UserDto>> GetAllUsersAsync();
-        /// <summary>Throws EntityNotFoundException when can't find user</summary> 
         public Task<UserDto> GetUserAsync(Guid id);
-        /// <summary>Throws EntityNotFoundException when can't find user</summary> 
         public Task<UserDto> GetUserAsync(string email);
         /// <summary>Throws EntityAlreadyExistsException when finds email in db</summary> 
         public Task<UserDto> CreateUserAsync(CreateUserDto createUserDto);

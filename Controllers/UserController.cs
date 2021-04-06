@@ -30,7 +30,6 @@ namespace BookWebDotNet.Controllers
         [HttpPost]
         public async Task<ActionResult<UserDto>> CreateUserAsync([FromBody] CreateUserDto dto)
         {
-            //TODO: check if email exists
             var user = await _service.CreateUserAsync(dto);
 
             return CreatedAtAction(nameof(GetAllUsersAsync), new {id = user.UserId}, user);

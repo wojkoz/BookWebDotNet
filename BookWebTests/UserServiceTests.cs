@@ -44,7 +44,7 @@ namespace BookWebTests
         }
 
         [Fact]
-        public async Task GetUserAsync_ShouldThrowException_WhenUserNotExistsWithId()
+        public async Task GetUserAsync_ShouldReturnNull_WhenUserNotExistsWithId()
         {
             //Arrange
             var guid = Guid.NewGuid();
@@ -54,16 +54,10 @@ namespace BookWebTests
             _userRepo.Users.Returns(mockSet);
         
             //Act
-            Func<Task> act = async () =>
-            {
-                await _sut.GetUserAsync(guid);
-            };
+            var user = await _sut.GetUserAsync(guid);
+            
             //Assert
-
-            await act
-                .Should()
-                .ThrowAsync<EntityNotFoundException>()
-                .WithMessage($"Couldn\'t find user with id = {guid}");
+            user.Should().BeNull();
         }
 
 
@@ -95,16 +89,10 @@ namespace BookWebTests
             _userRepo.Users.Returns(mockSet);
 
             //Act
-            Func<Task> act = async () =>
-            {
-                await _sut.GetUserAsync(email);
-            };
+            var user = await _sut.GetUserAsync(email);
+            
             //Assert
-
-            await act
-                .Should()
-                .ThrowAsync<EntityNotFoundException>()
-                .WithMessage($"Couldn\'t find user with email = {email}");
+            user.Should().BeNull();
         }
 
         [Fact]
