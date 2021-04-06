@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using BookWebDotNet.Domain.Dtos;
 using BookWebDotNet.Domain.Entity;
+using BookWebDotNet.Domain.Exceptions;
 using BookWebDotNet.Service;
 
 namespace BookWebDotNet.Controllers
@@ -30,9 +31,16 @@ namespace BookWebDotNet.Controllers
         [HttpPost]
         public async Task<ActionResult<UserDto>> CreateUserAsync([FromBody] CreateUserDto dto)
         {
-            var user = await _service.CreateUserAsync(dto);
+            try
+            {
+                var user = await _service.CreateUserAsync(dto);
 
-            return CreatedAtAction(nameof(GetAllUsersAsync), new {id = user.UserId}, user);
+                return CreatedAtAction(nameof(GetAllUsersAsync), new {id = user.UserId}, user);
+            }
+            catch (EntityAlreadyExistsException e)
+            {
+                return Conflict(e.Message);
+            }
         }
 
         [HttpGet("/api/[controller]/{id}")]
@@ -64,15 +72,29 @@ namespace BookWebDotNet.Controllers
         [HttpPut]
         public async Task<ActionResult<UserDto>> UpdateUser([FromBody] UserDto dto)
         {
-            var user = await _service.UpdateUserAsync(dto);
+            try
+            {
+                var user = await _service.UpdateUserAsync(dto);
 
-            return Ok(user);
+                return Ok(user);
+            }
+            catch (EntityNotFoundException)
+            {
+                return NotFound();
+            }
         }
 
         [HttpDelete("/api/[controller]/{id}")]
         public async Task<ActionResult> DeleteUserById(Guid id)
         {
-            await _service.DeleteUserAsync(id);
+            try
+            {
+                await _service.DeleteUserAsync(id);
+            }
+            catch (EntityNotFoundException)
+            {
+                return NotFound();
+            }
 
             return Ok();
         }
