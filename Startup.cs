@@ -30,6 +30,7 @@ namespace BookWebDotNet
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IBookService, BookService>();
+            services.AddScoped<IReviewService, ReviewService>();
 
             services.AddControllers(options =>
             {
