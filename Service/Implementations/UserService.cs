@@ -31,10 +31,10 @@ namespace BookWebDotNet.Service.Implementations
         
         public async Task<UserDto> GetUserAsync(Guid id)
         {
-            var dto = _repository
+            var dto = await _repository
                 .Users
                 .AsNoTracking()
-                .FirstOrDefault(user => user.UserId.Equals(id));
+                .FirstOrDefaultAsync(user => user.UserId.Equals(id));
 
             if (dto is null)
             {
@@ -46,18 +46,17 @@ namespace BookWebDotNet.Service.Implementations
 
         public async Task<UserDto> GetUserAsync(string email)
         {
-            var dto = _repository
+            var user = await _repository
                 .Users
                 .AsNoTracking()
-                .SingleOrDefault(user => user.Email == email)
-                ?.AdaptToDto();
+                .SingleOrDefaultAsync(user => user.Email == email);
 
-            if (dto is null)
+            if (user is null)
             {
                 return null;
             }
 
-            return await Task.FromResult(dto);
+            return await Task.FromResult(user.AdaptToDto());
         }
 
         public async Task<UserDto> CreateUserAsync(CreateUserDto createUserDto)
@@ -80,9 +79,9 @@ namespace BookWebDotNet.Service.Implementations
 
         public async Task<UserDto> UpdateUserAsync(UserDto dto)
         {
-            var user = _repository.Users
+            var user = await _repository.Users
                 .AsNoTracking()
-                .FirstOrDefault(u => u.UserId.Equals(dto.UserId));
+                .FirstOrDefaultAsync(u => u.UserId.Equals(dto.UserId));
 
             if (user is null)
             {
@@ -99,7 +98,9 @@ namespace BookWebDotNet.Service.Implementations
 
         public async Task DeleteUserAsync(Guid id)
         {
-            var user = _repository.Users.AsNoTracking().FirstOrDefault(item => item.UserId.Equals(id));
+            var user = await _repository.Users
+                .AsNoTracking()
+                .FirstOrDefaultAsync(item => item.UserId.Equals(id));
 
             if (user is null)
             {

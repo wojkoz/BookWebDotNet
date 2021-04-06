@@ -9,20 +9,18 @@ using System.Linq;
 using System.Threading.Tasks;
 using BookWebDotNet.Domain.Dtos;
 using BookWebDotNet.Domain.Exceptions;
+using MockQueryable.NSubstitute;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace BookWebTests
 {
     public class UserServiceTests
     {
-        private readonly ITestOutputHelper _testOutputHelper;
         private readonly UserService _sut;
         private readonly BookWebDbContext _userRepo = Substitute.For<BookWebDbContext>();
 
-        public UserServiceTests(ITestOutputHelper testOutputHelper)
+        public UserServiceTests()
         {
-            _testOutputHelper = testOutputHelper;
             _sut = new UserService(_userRepo);
         }
 
@@ -32,7 +30,7 @@ namespace BookWebTests
             //Arrange
             var guid = Guid.NewGuid();
             var data = GenerateUsers(guid);
-            var mockSet = DbSetMock.GenerateMockSet(data);
+            var mockSet = data.AsQueryable().BuildMockDbSet();
 
             _userRepo.Users.Returns(mockSet);
 
@@ -49,7 +47,7 @@ namespace BookWebTests
             //Arrange
             var guid = Guid.NewGuid();
             var data = GenerateUsers(null);
-            var mockSet = DbSetMock.GenerateMockSet(data);
+            var mockSet = data.AsQueryable().BuildMockDbSet();
 
             _userRepo.Users.Returns(mockSet);
         
@@ -67,7 +65,7 @@ namespace BookWebTests
             //Arrange
             const string email = "test@test.pl";
             var data = GenerateUsers(Guid.NewGuid());
-            var mockSet = DbSetMock.GenerateMockSet(data);
+            var mockSet = data.AsQueryable().BuildMockDbSet();
 
             _userRepo.Users.Returns(mockSet);
 
@@ -84,7 +82,7 @@ namespace BookWebTests
             //Arrange
             const string email = "tes@ttttt.op";
             var data = GenerateUsers(null);
-            var mockSet = DbSetMock.GenerateMockSet(data);
+            var mockSet = data.AsQueryable().BuildMockDbSet();
 
             _userRepo.Users.Returns(mockSet);
 
@@ -101,8 +99,7 @@ namespace BookWebTests
             //Arrange
             var guid = Guid.NewGuid();
             var data = GenerateUsers(guid);
-
-            var mockSet = DbSetMock.GenerateMockSet(data);
+            var mockSet = data.AsQueryable().BuildMockDbSet();
 
             const string email = "update@email.com";
             const string name = "TestName";
@@ -136,8 +133,7 @@ namespace BookWebTests
             //Arrange
             var guid = Guid.NewGuid();
             var data = GenerateUsers(guid);
-
-            var mockSet = DbSetMock.GenerateMockSet(data);
+            var mockSet = data.AsQueryable().BuildMockDbSet();
 
             const string email = "update@email.com";
             const string name = "TestName";
@@ -185,7 +181,7 @@ namespace BookWebTests
                 Surname = surname
             };
             var data = GenerateUsers(null);
-            var mockSet = DbSetMock.GenerateMockSet(data);
+            var mockSet = data.AsQueryable().BuildMockDbSet();
             _userRepo.Users.Returns(mockSet);
 
             //Act
