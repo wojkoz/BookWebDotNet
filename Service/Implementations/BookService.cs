@@ -79,7 +79,8 @@ namespace BookWebDotNet.Service.Implementations
             }
 
             var books = _repository.Books
-                .FromSqlRaw("SELECT m FROM Book m WHERE LOWER(m.title) LIKE TRIM(LOWER(CONCAT('%',TRIM({0}),'%')))",
+                .FromSqlRaw(
+                    "SELECT Title, Author, Publisher, Year, Cover, BookId FROM Books m WHERE LOWER(m.title) LIKE TRIM(LOWER(CONCAT('%',TRIM({0}),'%')))",
                     str)
                 .AsNoTracking()
                 .AsEnumerable()
